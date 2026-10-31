@@ -47,6 +47,17 @@ AB_OTA_UPDATER := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
 BOARD_USES_RECOVERY_AS_BOOT := true
 
+AB_OTA_PARTITIONS += \
+    boot \
+    system \
+    system_ext \
+    vendor \
+    product \
+    dtbo \
+    vbmeta \
+    vbmeta_system \
+    vbmeta_vendor
+
 # Partitions Sizes
 BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
