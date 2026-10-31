@@ -82,9 +82,12 @@ jobs:
     - name: Build OrangeFox Recovery
       run: |
         cd ~/work
+        # Remove obsolete vendorsetup.sh if present to prevent Android 12 envsetup errors
+        rm -f ${{ env.DEVICE_PATH }}/vendorsetup.sh
         export FOX_VERSION="${{ env.FOX_VERSION }}"
         export OF_MAINTAINER="visEXE | KSN"
         export ALLOW_MISSING_DEPENDENCIES=true
+        export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
         source build/envsetup.sh
         lunch twrp_${{ env.DEVICE }}-eng || lunch twrp_${{ env.DEVICE }}-userdebug
         mka recoveryimage -j$(nproc --all) || mka bootimage -j$(nproc --all)
