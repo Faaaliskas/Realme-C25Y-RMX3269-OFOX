@@ -20,7 +20,8 @@ jobs:
     env:
       DEVICE: RMX3269
       DEVICE_PATH: device/realme/RMX3269
-      FOX_VERSION: "C25Y | visEXE | KSN"
+      OF_MAINTAINER: "visEXE | KSN"
+      FOX_MAINTAINER_PATCH_VERSION: "1"
 
     steps:
     - name: Checkout Device Tree
