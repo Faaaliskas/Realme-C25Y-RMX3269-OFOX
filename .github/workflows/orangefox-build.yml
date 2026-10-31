@@ -3,14 +3,14 @@ name: Build OrangeFox Recovery for Realme C25Y (RMX3269)
 on:
   workflow_dispatch:
     inputs:
-      MANIFEST_BRANCH:
-        description: 'OrangeFox Manifest Branch'
+      FOX_BRANCH:
+        description: 'OrangeFox Branch (12.1 is recommended for Android 11/12)'
         required: true
-        default: 'fox_11.0'
+        default: '12.1'
         type: choice
         options:
-        - fox_11.0
-        - fox_12.1
+        - '12.1'
+        - '14.1'
 
 jobs:
   build:
@@ -60,12 +60,11 @@ jobs:
         git config --global user.name "visEXE-KSN"
         git config --global user.email "visEXE@local"
 
-    - name: Initialize OrangeFox Manifest
+    - name: Sync OrangeFox Sources using Official Script
       run: |
-        mkdir -p ~/work
-        cd ~/work
-        repo init --depth=1 -u https://gitlab.com/OrangeFox/Manifest.git -b ${{ inputs.MANIFEST_BRANCH }}
-        repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+        git clone https://gitlab.com/OrangeFox/sync.git ~/sync
+        cd ~/sync
+        ./orangefox_sync.sh --branch ${{ inputs.FOX_BRANCH }} --path ~/work
 
     - name: Copy Device Tree into Workspace
       run: |
@@ -88,7 +87,7 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         source build/envsetup.sh
         lunch twrp_${{ env.DEVICE }}-eng || lunch twrp_${{ env.DEVICE }}-userdebug
-        mka recoveryimage -j$(nproc --all)
+        mka recoveryimage -j$(nproc --all) || mka bootimage -j$(nproc --all)
 
     - name: Check Output Files
       id: check_files
