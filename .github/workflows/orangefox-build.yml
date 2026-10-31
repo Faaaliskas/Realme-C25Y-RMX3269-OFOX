@@ -71,14 +71,6 @@ jobs:
         mkdir -p ~/work/${{ env.DEVICE_PATH }}
         cp -r $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}/* ~/work/${{ env.DEVICE_PATH }}/
 
-    - name: Apply DRM Display Fix
-      run: |
-        cd ~/work
-        if [ -f ${{ env.DEVICE_PATH }}/patches/graphics_drm.cpp ]; then
-          echo "Applying DRM display patch to bootable/recovery/minui/graphics_drm.cpp..."
-          cp -f ${{ env.DEVICE_PATH }}/patches/graphics_drm.cpp bootable/recovery/minui/graphics_drm.cpp
-        fi
-
     - name: Build OrangeFox Recovery
       run: |
         set +e
