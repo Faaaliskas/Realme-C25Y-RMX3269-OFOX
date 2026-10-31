@@ -4,12 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       FOX_BRANCH:
-        description: 'OrangeFox Branch'
+        description: 'OrangeFox Branch (12.1 is recommended for Android 11/12)'
         required: true
         default: '12.1'
         type: choice
         options:
         - '12.1'
+        - '14.1'
 
 jobs:
   build:
@@ -81,6 +82,7 @@ jobs:
 
     - name: Build OrangeFox Recovery
       run: |
+        set +e
         set -x
         cd ~/work
         # Remove obsolete vendorsetup.sh if present
@@ -103,6 +105,8 @@ jobs:
         find . -maxdepth 2 -name "OrangeFox*.zip" -exec cp {} $GITHUB_WORKSPACE/output/ \;
         find . -maxdepth 2 -name "OrangeFox*.img" -exec cp {} $GITHUB_WORKSPACE/output/ \;
         find . -maxdepth 2 -name "boot.img" -exec cp {} $GITHUB_WORKSPACE/output/recovery-boot.img \;
+        find . -maxdepth 2 -name "recovery.img" -exec cp {} $GITHUB_WORKSPACE/output/recovery.img \;
+        ls -la $GITHUB_WORKSPACE/output/
 
     - name: Upload OrangeFox Artifacts
       uses: actions/upload-artifact@v4
