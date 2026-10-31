@@ -4,13 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       FOX_BRANCH:
-        description: 'OrangeFox Branch (12.1 is recommended for Android 11/12)'
+        description: 'OrangeFox Branch'
         required: true
         default: '12.1'
         type: choice
         options:
         - '12.1'
-        - '14.1'
 
 jobs:
   build:
@@ -21,7 +20,7 @@ jobs:
       DEVICE: RMX3269
       DEVICE_PATH: device/realme/RMX3269
       OF_MAINTAINER: "visEXE | KSN"
-      FOX_MAINTAINER_PATCH_VERSION: "1"
+      FOX_MAINTAINER_PATCH_VERSION: 1
 
     steps:
     - name: Checkout Device Tree
@@ -82,19 +81,18 @@ jobs:
 
     - name: Build OrangeFox Recovery
       run: |
-        set +e
         set -x
         cd ~/work
         # Remove obsolete vendorsetup.sh if present
         rm -f ${{ env.DEVICE_PATH }}/vendorsetup.sh
-        export FOX_VERSION="${{ env.FOX_VERSION }}"
-        export OF_MAINTAINER="visEXE | KSN"
+        unset FOX_VERSION
+        export OF_MAINTAINER="${{ env.OF_MAINTAINER }}"
+        export FOX_MAINTAINER_PATCH_VERSION=1
         export ALLOW_MISSING_DEPENDENCIES=true
         export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
         source build/envsetup.sh
         lunch twrp_${{ env.DEVICE }}-eng || lunch twrp_${{ env.DEVICE }}-userdebug
         mka recoveryimage -j$(nproc --all) || mka bootimage -j$(nproc --all)
-        set -e
 
     - name: Check Output Files
       id: check_files
