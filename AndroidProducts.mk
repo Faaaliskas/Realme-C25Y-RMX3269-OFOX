@@ -1,0 +1,11 @@
+#
+# Copyright (C) 2026 The Android Open Source Project
+# Copyright (C) 2026 The TWRP / OrangeFox Open Source Project
+#
+
+PRODUCT_MAKEFILES := \
+    $(LOCAL_DIR)/twrp_RMX3269.mk
+
+COMMON_LUNCH_CHOICES := \
+    twrp_RMX3269-eng \
+    twrp_RMX3269-userdebug
