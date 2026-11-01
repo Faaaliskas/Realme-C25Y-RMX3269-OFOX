@@ -22,11 +22,6 @@ PRODUCT_PACKAGES += \
     update_engine_sideload \
     update_verifier
 
-# Crypto / Keymaster / Gatekeeper
-PRODUCT_PACKAGES += \
-    qcom_decrypt \
-    qcom_decrypt_fbe
-
 # Recovery init files
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/recovery/root/init.recovery.ums512.rc:root/init.recovery.ums512.rc \
