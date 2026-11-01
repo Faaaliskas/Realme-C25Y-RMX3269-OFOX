@@ -74,7 +74,7 @@ jobs:
 
     - name: Build OrangeFox Recovery
       run: |
-        set +e
+        set -e
         set -x
         cd ~/fox_work
         # Remove obsolete vendorsetup.sh if present
@@ -95,6 +95,7 @@ jobs:
         export TW_SCREEN_HEIGHT=1600
         source build/envsetup.sh
         lunch twrp_${{ env.DEVICE }}-eng || lunch twrp_${{ env.DEVICE }}-userdebug
+        echo "Successfully selected target: $TARGET_PRODUCT for device $TARGET_DEVICE"
         mka bootimage -j$(nproc --all)
 
     - name: Check Output Files and Repack with Magiskboot
