@@ -8,7 +8,7 @@ Device tree for building OrangeFox / TWRP Recovery for **Realme C25Y (RMX3269 / 
 | :--- | :--- |
 | SoC | Unisoc Tiger T610 (UMS512) |
 | Architecture | ARM64 (aarch64) |
-| Android Version | Android 11 (R) / 12 (S) |
+| Android Version | Android 11 |
 | Partitions Layout | Virtual A/B (Recovery-in-boot) |
 | Resolution | 720 x 1600 |
 | DPI | 320 |
