@@ -64,18 +64,19 @@ jobs:
       run: |
         git clone https://gitlab.com/OrangeFox/sync.git ~/sync
         cd ~/sync
-        ./orangefox_sync.sh --branch ${{ inputs.FOX_BRANCH }} --path ~/work
+        ./orangefox_sync.sh --branch ${{ inputs.FOX_BRANCH }} --path ~/fox_work
 
     - name: Copy Device Tree into Workspace
       run: |
-        mkdir -p ~/work/${{ env.DEVICE_PATH }}
-        cp -r $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}/* ~/work/${{ env.DEVICE_PATH }}/
+        mkdir -p ~/fox_work/${{ env.DEVICE_PATH }}
+        cp -r $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}/* ~/fox_work/${{ env.DEVICE_PATH }}/
+        rm -rf $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}
 
     - name: Build OrangeFox Recovery
       run: |
         set +e
         set -x
-        cd ~/work
+        cd ~/fox_work
         # Remove obsolete vendorsetup.sh if present
         rm -f ${{ env.DEVICE_PATH }}/vendorsetup.sh
         # Fix rsync conflict where root/vendor symlink conflicts with recovery/root/vendor directory
@@ -99,7 +100,7 @@ jobs:
     - name: Check Output Files and Repack with Magiskboot
       id: check_files
       run: |
-        cd ~/work/out/target/product/${{ env.DEVICE }}
+        cd ~/fox_work/out/target/product/${{ env.DEVICE }}
         ls -la
         mkdir -p $GITHUB_WORKSPACE/output
         find . -maxdepth 2 -name "OrangeFox*.zip" -exec cp {} $GITHUB_WORKSPACE/output/ \;
