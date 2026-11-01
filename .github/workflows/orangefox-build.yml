@@ -19,7 +19,7 @@ jobs:
     env:
       DEVICE: RMX3269
       DEVICE_PATH: device/realme/RMX3269
-      OF_MAINTAINER: "visEXE-KSN"
+      OF_MAINTAINER: "visEXE"
       FOX_MAINTAINER_PATCH_VERSION: 2
 
     steps:
@@ -57,7 +57,7 @@ jobs:
 
     - name: Configure Git
       run: |
-        git config --global user.name "visEXE-KSN"
+        git config --global user.name "visEXE"
         git config --global user.email "visEXE@local"
 
     - name: Sync OrangeFox Sources using Official Script
