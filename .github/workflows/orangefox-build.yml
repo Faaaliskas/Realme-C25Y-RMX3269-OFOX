@@ -78,6 +78,10 @@ jobs:
         cd ~/work
         # Remove obsolete vendorsetup.sh if present
         rm -f ${{ env.DEVICE_PATH }}/vendorsetup.sh
+        # Fix rsync conflict where root/vendor symlink conflicts with recovery/root/vendor directory
+        grep -rl "rsync -a --exclude=sdcard" build/ | while read -r f; do
+            sed -i 's/rsync -a --exclude=sdcard/rsync -a --exclude=sdcard --exclude=\/root\/vendor --exclude=vendor --exclude=\/root\/product --exclude=product --exclude=\/root\/system_ext --exclude=system_ext --exclude=\/root\/odm --exclude=odm/g' "$f"
+        done
         unset FOX_VERSION
         export OF_MAINTAINER="${{ env.OF_MAINTAINER }}"
         export FOX_MAINTAINER_PATCH_VERSION=1
