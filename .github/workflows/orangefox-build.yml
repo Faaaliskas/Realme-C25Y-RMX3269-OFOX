@@ -87,6 +87,11 @@ jobs:
         export FOX_MAINTAINER_PATCH_VERSION=2
         export ALLOW_MISSING_DEPENDENCIES=true
         export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+        export TW_THEME="portrait_hdpi"
+        export TARGET_SCREEN_WIDTH=720
+        export TARGET_SCREEN_HEIGHT=1600
+        export TW_SCREEN_WIDTH=720
+        export TW_SCREEN_HEIGHT=1600
         source build/envsetup.sh
         lunch twrp_${{ env.DEVICE }}-eng || lunch twrp_${{ env.DEVICE }}-userdebug
         mka bootimage -j$(nproc --all)
