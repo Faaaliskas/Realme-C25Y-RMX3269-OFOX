@@ -39,10 +39,6 @@ PRODUCT_PACKAGES += \
     android.hardware.boot@1.1-service
 
 PRODUCT_PACKAGES += \
-    bootctrl.unisoc \
-    bootctrl.unisoc.recovery
-
-PRODUCT_PACKAGES += \
     vendor.unisoc.hardware.tswake-service
 
 # Fastbootd

@@ -4,13 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       FOX_BRANCH:
-        description: 'OrangeFox Branch (12.1 is recommended for Android 11/12)'
+        description: 'OrangeFox Branch (12.1 for Android 11/12)'
         required: true
         default: '12.1'
         type: choice
         options:
         - '12.1'
-        - '14.1'
 
 jobs:
   build:
