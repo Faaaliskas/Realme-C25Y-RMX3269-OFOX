@@ -25,3 +25,5 @@ The tree is based on the A.49 firmware, so it is guaranteed to work only on it.
 ## Thanks
 
 Gemini 3.8 Flash
+[KSN](https://github.com/KSN2redawew)
+[depesh1977](https://github.com/depesh1977/Realme-C21Y-RMX3261)
