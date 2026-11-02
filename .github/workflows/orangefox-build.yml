@@ -74,7 +74,6 @@ jobs:
 
     - name: Build OrangeFox Recovery
       run: |
-        set -e
         set -x
         cd ~/fox_work
         # Remove obsolete vendorsetup.sh if present
@@ -93,8 +92,15 @@ jobs:
         export TARGET_SCREEN_HEIGHT=1600
         export TW_SCREEN_WIDTH=720
         export TW_SCREEN_HEIGHT=1600
+        set +e
         source build/envsetup.sh
         lunch twrp_${{ env.DEVICE }}-eng || lunch twrp_${{ env.DEVICE }}-userdebug
+        LUNCH_RET=$?
+        set -e
+        if [ $LUNCH_RET -ne 0 ]; then
+            echo "Failed to select lunch target!"
+            exit 1
+        fi
         echo "Successfully selected target: $TARGET_PRODUCT for device $TARGET_DEVICE"
         mka bootimage -j$(nproc --all)
 
