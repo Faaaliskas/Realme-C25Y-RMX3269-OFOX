@@ -88,6 +88,8 @@ jobs:
       run: |
         set -x
         cd ~/fox_work
+        # Ensure executable permissions on helper scripts and binaries
+        chmod -R +x ${{ env.DEVICE_PATH }}/recovery/root/system/bin/ || true
         # Remove obsolete vendorsetup.sh if present
         rm -f ${{ env.DEVICE_PATH }}/vendorsetup.sh
         # Fix rsync conflict where root/vendor symlink conflicts with recovery/root/vendor directory

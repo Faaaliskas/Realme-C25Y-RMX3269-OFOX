@@ -1,2 +1,89 @@
-#add for board init.rc for recovery mode
+# Recovery init for Realme C25Y (RMX3269), ro.hardware=ums512 / RMX3269
 import /init.recovery.common.rc
+
+on fs
+    start prepdecrypt
+
+service prepdecrypt /system/bin/prepdecrypt.sh
+    oneshot
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+
+service keymaster-4-1 /system/bin/android.hardware.keymaster@4.1-unisoc.service
+    interface android.hardware.keymaster@4.0::IKeymasterDevice default
+    interface android.hardware.keymaster@4.1::IKeymasterDevice default
+    user root
+    group root system drmrpc
+    disabled
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /system/lib64:/system/lib64/hw:/vendor/lib64
+
+service gatekeeper-1-0 /system/bin/android.hardware.gatekeeper@1.0-service.trusty
+    interface android.hardware.gatekeeper@1.0::IGatekeeper default
+    user root
+    group root system
+    disabled
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /system/lib64:/system/lib64/hw:/vendor/lib64
+
+service vendor.tsupplicant /system/bin/tsupplicant firmware
+    user root
+    group root system
+    disabled
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /system/lib64:/system/lib64/hw:/vendor/lib64
+
+service ta-supplier-wait /system/bin/start_tsupplicant.sh
+    oneshot
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+
+service storage-proxies /system/bin/start_storage_proxies.sh
+    oneshot
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+
+on property:crypto.ready=1
+    start keymaster-4-1
+    start storage-proxies
+    start ta-supplier-wait
+
+on property:vendor.sprd.tsupplicant.enabled=1
+    start vendor.tsupplicant
+
+on property:twrp.tsupplicant.ready=1
+    start gatekeeper-1-0
+
+on property:ro.crypto.state=unsupported || property:ro.crypto.state=unencrypted || property:twrp.decrypt.done=true
+    stop keymaster-4-1
+    stop gatekeeper-1-0
+
+# TEE secure storage proxies
+service vendor.rpmbproxy /system/bin/sprdstorageproxyd -f rpmb -d /dev/trusty-ipc-dev0 -p /data/vendor/sprd_ss
+    user root
+    group system
+    oneshot
+    disabled
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /system/lib64:/system/lib64/hw:/vendor/lib64
+
+service vendor.nsproxy /system/bin/sprdstorageproxyd -f ns -d /dev/trusty-ipc-dev0 -p /data/vendor/sprd_ss
+    user root
+    group system
+    disabled
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /system/lib64:/system/lib64/hw:/vendor/lib64
+
+service vendor.prodproxy /system/bin/sprdstorageproxyd -f prodnv -d /dev/trusty-ipc-dev0 -p /mnt/vendor/productinfo/sprd_ss
+    user root
+    group system
+    oneshot
+    disabled
+    seclabel u:r:recovery:s0
+    setenv LD_LIBRARY_PATH /system/lib64:/system/lib64/hw:/vendor/lib64
