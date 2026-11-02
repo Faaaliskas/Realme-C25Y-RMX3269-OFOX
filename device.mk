@@ -57,13 +57,6 @@ PRODUCT_PACKAGES += \
     update_verifier \
     update_engine_sideload
 
-# Gatekeeper & Keymaster HAL
-PRODUCT_PACKAGES += \
-    android.hardware.gatekeeper@1.0-service \
-    android.hardware.gatekeeper@1.0-impl \
-    android.hardware.keymaster@4.1-service \
-    android.hardware.keymaster@4.0-service
-
 # OEM otacert
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     $(LOCAL_PATH)/security/releasekey

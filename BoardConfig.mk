@@ -203,16 +203,6 @@ TW_FORCE_KEYMASTER_VER := true
 OF_DEFAULT_KEYMASTER_VERSION := 4.1
 TW_INCLUDE_LIBRESETPROP := true
 
-TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
-    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.gatekeeper@1.0 \
-    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.keymaster@4.0 \
-    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.keymaster@4.1 \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libgatekeeper \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster_messages \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster_portable \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libtrusty
-
 # MTP
 TW_HAS_MTP := true
 TW_MTP_DEVICE := /dev/mtp_usb

@@ -1,4 +1,4 @@
-#!/sbin/sh
+#!/system/bin/sh
 # Wait for the trusty IPC node, then let the TEE services start in order.
 
 LOG=/tmp/prepdecrypt.log

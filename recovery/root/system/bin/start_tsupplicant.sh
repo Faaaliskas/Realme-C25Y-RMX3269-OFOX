@@ -1,4 +1,4 @@
-#!/sbin/sh
+#!/system/bin/sh
 # Start the TEE TA supplier after storage proxies and /data are ready.
 
 LOG=/tmp/start_tsupplicant.log

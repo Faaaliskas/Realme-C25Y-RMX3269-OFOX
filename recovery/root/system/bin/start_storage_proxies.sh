@@ -1,4 +1,4 @@
-#!/sbin/sh
+#!/system/bin/sh
 # Mount prodnv, wait for /data, then start the TEE secure storage proxies in the
 # order storageproxyd_android.rc implies. Started before /data exists they open
 # shadow files and the TEE verify fails.
