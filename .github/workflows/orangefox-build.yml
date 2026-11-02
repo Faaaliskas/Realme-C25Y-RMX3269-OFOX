@@ -72,17 +72,16 @@ jobs:
         cp -r $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}/* ~/fox_work/${{ env.DEVICE_PATH }}/
         rm -rf $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}
 
-    - name: Apply DRM Fix
+    - name: Apply DRM Fix to minuitwrp
       run: |
-        echo "Searching for graphics_drm.cpp..."
-        DRM_FILES=$(find ~/fox_work/bootable -name "graphics_drm.cpp")
-        if [ -z "$DRM_FILES" ]; then
-          echo "Warning: graphics_drm.cpp not found under bootable!"
+        echo "Locating minuitwrp/graphics_drm.cpp..."
+        TARGET_FILE=$(find ~/fox_work/bootable -path "*/minuitwrp/graphics_drm.cpp" | head -n 1)
+        if [ -n "$TARGET_FILE" ]; then
+          echo "Replacing $TARGET_FILE with patched legacy DRM..."
+          cp ~/fox_work/${{ env.DEVICE_PATH }}/patches/graphics_drm.cpp "$TARGET_FILE"
         else
-          for f in $DRM_FILES; do
-            echo "Replacing $f with patched graphics_drm.cpp..."
-            cp ~/fox_work/${{ env.DEVICE_PATH }}/patches/graphics_drm.cpp "$f"
-          done
+          echo "Error: minuitwrp/graphics_drm.cpp not found!"
+          exit 1
         fi
 
     - name: Build OrangeFox Recovery
