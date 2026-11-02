@@ -72,6 +72,19 @@ jobs:
         cp -r $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}/* ~/fox_work/${{ env.DEVICE_PATH }}/
         rm -rf $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}
 
+    - name: Apply DRM Fix
+      run: |
+        echo "Searching for graphics_drm.cpp..."
+        DRM_FILES=$(find ~/fox_work/bootable -name "graphics_drm.cpp")
+        if [ -z "$DRM_FILES" ]; then
+          echo "Warning: graphics_drm.cpp not found under bootable!"
+        else
+          for f in $DRM_FILES; do
+            echo "Replacing $f with patched graphics_drm.cpp..."
+            cp ~/fox_work/${{ env.DEVICE_PATH }}/patches/graphics_drm.cpp "$f"
+          done
+        fi
+
     - name: Build OrangeFox Recovery
       run: |
         set -x
@@ -104,12 +117,42 @@ jobs:
         echo "Successfully selected target: $TARGET_PRODUCT for device $TARGET_DEVICE"
         mka bootimage -j$(nproc --all)
 
-    - name: Check Output Files and Repack with Magiskboot
+    - name: Check Output Files and Repack
       id: check_files
       run: |
-        cd ~/fox_work/out/target/product/${{ env.DEVICE }}
-        ls -la
+        cd ~/fox_work
+        OUT_DIR="out/target/product/${{ env.DEVICE }}"
+        MKBOOTIMG="out/host/linux-x86/bin/mkbootimg"
+        AVBTOOL="external/avb/avbtool"
         mkdir -p $GITHUB_WORKSPACE/output
+
+        # Repack boot.img using exact Unisoc offsets and AVB footer if ramdisk exists
+        if [ -f "$OUT_DIR/ramdisk-recovery.img" ] && [ -f "$MKBOOTIMG" ]; then
+          echo "Creating AVB-signed manual boot.img..."
+          $MKBOOTIMG \
+            --kernel "${{ env.DEVICE_PATH }}/prebuilt/kernel" \
+            --ramdisk "$OUT_DIR/ramdisk-recovery.img" \
+            --cmdline "console=ttyS1,115200n8 androidboot.selinux=permissive twrpfastboot=1 buildvariant=eng" \
+            --base 0x00000000 --pagesize 2048 \
+            --dtb "${{ env.DEVICE_PATH }}/prebuilt/dtb.img" \
+            --header_version 2 \
+            --kernel_offset 0x00008000 --ramdisk_offset 0x05400000 \
+            --tags_offset 0x00000100 --dtb_offset 0x01f00000 \
+            --os_version 12 --os_patch_level 2022-04-05 \
+            -o $GITHUB_WORKSPACE/output/boot_repack_avb.img || true
+
+          if [ -f "$GITHUB_WORKSPACE/output/boot_repack_avb.img" ] && [ -f "$AVBTOOL" ]; then
+            python3 $AVBTOOL add_hash_footer \
+              --image $GITHUB_WORKSPACE/output/boot_repack_avb.img \
+              --partition_size 67108864 \
+              --partition_name boot \
+              --algorithm NONE \
+              --rollback_index 1 || true
+          fi
+        fi
+
+        cd ~/fox_work/$OUT_DIR
+        ls -la
         find . -maxdepth 2 -name "OrangeFox*.zip" -exec cp {} $GITHUB_WORKSPACE/output/ \;
         find . -maxdepth 2 -name "OrangeFox*.img" -exec cp {} $GITHUB_WORKSPACE/output/ \;
         find . -maxdepth 2 -name "boot.img" -exec cp {} $GITHUB_WORKSPACE/output/recovery-boot.img \;
