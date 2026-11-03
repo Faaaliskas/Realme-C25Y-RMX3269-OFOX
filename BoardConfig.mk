@@ -20,6 +20,7 @@ DEVICE_SCREEN_HEIGHT := 1600
 OF_SCREEN_H := 1600
 # Brightness & Screen
 TW_SCREEN_BLANK_ON_BOOT := true
+TW_NO_SCREEN_BLANK := true
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/sprd_backlight/brightness"
 TW_MAX_BRIGHTNESS := 4095
 TW_DEFAULT_BRIGHTNESS := 2048
