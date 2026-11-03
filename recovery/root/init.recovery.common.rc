@@ -169,10 +169,11 @@ on boot
 
     # Flashlight interface for OrangeFox
     mkdir /flashlight 0777 root root
-    symlink /sys/devices/virtual/misc/sprd_flash/test /flashlight/brightness
+    write /flashlight/brightness 0
     write /flashlight/max_brightness 1
     chmod 0666 /flashlight/brightness
     chmod 0666 /flashlight/max_brightness
+    start flashlight_daemon
 
     chown system system /dev/iio:device1
     chown system system /sys/class/sprd_sensorhub/sensor_hub/iio/trigger/current_trigger
@@ -465,6 +466,12 @@ service tswake-default /system/bin/hw/vendor.unisoc.hardware.tswake-service
     user root
     group root
     seclabel u:r:recovery:s0
+
+service flashlight_daemon /system/bin/sh /system/bin/flashlight_daemon.sh
+    user root
+    group root
+    seclabel u:r:recovery:s0
+    disabled
 
 on post-fs
     start tswake-default
