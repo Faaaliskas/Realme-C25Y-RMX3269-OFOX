@@ -7,7 +7,7 @@ BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 DEVICE_PATH := device/realme/RMX3269
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
 
-# Display & Layout
+# Display
 TARGET_SCREEN_DENSITY := 320
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TW_THEME := portrait_hdpi
@@ -17,32 +17,12 @@ TW_SCREEN_WIDTH := 720
 TW_SCREEN_HEIGHT := 1600
 DEVICE_SCREEN_WIDTH := 720
 DEVICE_SCREEN_HEIGHT := 1600
-
-# OrangeFox Screen and Layout (20:9 720x1600)
 OF_SCREEN_H := 1600
-OF_STATUS_H := 84
-OF_HIDE_NOTCH := 1
-OF_STATUS_INDENT_LEFT := 140
-OF_STATUS_INDENT_RIGHT := 140
-OF_OPTIONS_LIST_NUM := 6
-OF_USE_GREEN_LED := 0
-
-# Hide duplicate TWRP status bar icons (shift off-screen / position)
-TW_CUSTOM_CPU_POS := "300"
-TW_CUSTOM_CLOCK_POS := "70"
-TW_CUSTOM_BATTERY_POS := "790"
-
-# Brightness
-TW_NO_SCREEN_BLANK_ON_BOOT := true
-TW_NO_SCREEN_TIMEOUT := true
-TW_BRIGHTNESS_PATH := "/sys/class/backlight/sprd_backlight/brightness"
-TW_MAX_BRIGHTNESS := 1023
-TW_DEFAULT_BRIGHTNESS := 600
-
-# Flashlight
-OF_FLASHLIGHT_ENABLE := 1
-OF_FL_PATH1 := /sys/devices/virtual/misc/sprd_flash/test
-OF_FL_PATH2 := /sys/class/flash_test/flash_test/flash_mode
+TW_SCREEN_BLANK_ON_BOOT := true
+TW_NO_SCREEN_BLANK := true
+TW_BRIGHTNESS_PATH := "/sys/devices/platform/sprd_backlight/backlight/sprd_backlight/brightness"
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 150
 
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true
@@ -190,18 +170,8 @@ TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
 TW_INCLUDE_LPTOOLS := true
 TW_DEVICE_VERSION := RMX3269-OrangeFox
 
-# TEMP (Unisoc CPU thermal sensor)
-TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone0/temp"
-
-# Crypto & FBE Decryption
-TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_CRYPTO_FBE := true
-TW_INCLUDE_FBE_METADATA_DECRYPT := true
-BOARD_USES_METADATA_PARTITION := true
-TW_USE_FSCRYPT_POLICY := 2
-TW_FORCE_KEYMASTER_VER := true
-OF_DEFAULT_KEYMASTER_VERSION := 4.1
-TW_INCLUDE_LIBRESETPROP := true
+# TEMP
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/platform/soc/soc:aon/64200000.spi/spi_master/spi4/spi4.0/sc27xx-fgu/power_supply/sc27xx-fgu/temp
 
 # MTP
 TW_HAS_MTP := true
