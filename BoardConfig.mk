@@ -18,11 +18,17 @@ TW_SCREEN_HEIGHT := 1600
 DEVICE_SCREEN_WIDTH := 720
 DEVICE_SCREEN_HEIGHT := 1600
 OF_SCREEN_H := 1600
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_NO_SCREEN_BLANK := true
-TW_BRIGHTNESS_PATH := "/sys/devices/platform/sprd_backlight/backlight/sprd_backlight/brightness"
-TW_MAX_BRIGHTNESS := 255
-TW_DEFAULT_BRIGHTNESS := 150
+# Brightness
+TW_NO_SCREEN_BLANK_ON_BOOT := true
+TW_NO_SCREEN_TIMEOUT := true
+TW_BRIGHTNESS_PATH := "/sys/class/backlight/sprd_backlight/brightness"
+TW_MAX_BRIGHTNESS := 1023
+TW_DEFAULT_BRIGHTNESS := 600
+
+# Flashlight
+OF_FLASHLIGHT_ENABLE := 1
+OF_FL_PATH1 := /sys/devices/virtual/misc/sprd_flash/test
+OF_FL_PATH2 := /sys/class/flash_test/flash_test/flash_mode
 
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true
