@@ -26,7 +26,7 @@ TW_DEFAULT_BRIGHTNESS := 2048
 
 # Flashlight
 OF_FLASHLIGHT_ENABLE := 1
-OF_FL_PATH1 := /sys/devices/virtual/misc/sprd_flash/test
+OF_FL_PATH1 := /flashlight
 
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true

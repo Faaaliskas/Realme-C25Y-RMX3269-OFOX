@@ -167,6 +167,13 @@ on boot
     insmod /socko/flash_ic_ocp8132.ko
     chmod 0666 /sys/devices/virtual/misc/sprd_flash/test
 
+    # Flashlight interface for OrangeFox
+    mkdir /flashlight 0777 root root
+    symlink /sys/devices/virtual/misc/sprd_flash/test /flashlight/brightness
+    write /flashlight/max_brightness 1
+    chmod 0666 /flashlight/brightness
+    chmod 0666 /flashlight/max_brightness
+
     chown system system /dev/iio:device1
     chown system system /sys/class/sprd_sensorhub/sensor_hub/iio/trigger/current_trigger
     chown system system /sys/class/sprd_sensorhub/sensor_hub/batch
