@@ -158,6 +158,14 @@ on boot
     setprop sys.usb.configfs 1
     write /sys/block/mmcblk0boot0/force_ro 0
     write /sys/block/mmcblk0boot1/force_ro 0
+    # Mount /socko and load flash driver
+    wait /dev/block/by-name/socko
+    mount ext4 /dev/block/by-name/socko /socko ro
+    insmod /socko/sprd_flash_drv.ko
+    insmod /socko/flash_ic_sc2703.ko
+    insmod /socko/flash_ic_ocp8137.ko
+    insmod /socko/flash_ic_ocp8132.ko
+    chmod 0666 /sys/devices/virtual/misc/sprd_flash/test
 
     chown system system /dev/iio:device1
     chown system system /sys/class/sprd_sensorhub/sensor_hub/iio/trigger/current_trigger
