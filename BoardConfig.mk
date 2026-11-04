@@ -189,8 +189,11 @@ TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
 TW_INCLUDE_LPTOOLS := true
 TW_DEVICE_VERSION := RMX3269-OrangeFox
 
+# Vibrator
+TW_USE_FF_VIBRATOR := true
+
 # TEMP
-TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/platform/soc/soc:aon/64200000.spi/spi_master/spi4/spi4.0/sc27xx-fgu/power_supply/sc27xx-fgu/temp
+TW_CUSTOM_CPU_TEMP_PATH := /sys/class/thermal/thermal_zone7/temp
 
 # MTP
 TW_HAS_MTP := true
