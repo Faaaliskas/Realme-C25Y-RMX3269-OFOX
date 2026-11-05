@@ -10,6 +10,7 @@ with open(path, "r", encoding="utf-8", errors="ignore") as f:
     content = f.read()
 
 new_vibrate_func = """static int g_ff_vibrator_fd = -1;
+static int g_ff_effect_id = -1;
 
 static int get_ff_vibrator_fd() {
     if (g_ff_vibrator_fd >= 0) {
@@ -82,21 +83,28 @@ int vibrate(int timeout_ms)
         struct ff_effect effect;
         memset(&effect, 0, sizeof(effect));
         effect.type = FF_RUMBLE;
-        effect.id = -1;
+        effect.id = g_ff_effect_id;
         effect.u.rumble.strong_magnitude = 0xFFFF;
         effect.u.rumble.weak_magnitude = 0xFFFF;
         effect.replay.length = (timeout_ms > 0 ? timeout_ms : 50);
         effect.replay.delay = 0;
 
-        if (ioctl(ff_fd, EVIOCSFF, &effect) >= 0) {
-            struct input_event play;
-            memset(&play, 0, sizeof(play));
-            play.type = EV_FF;
-            play.code = effect.id;
-            play.value = 1;
-            write(ff_fd, &play, sizeof(play));
-            return 0;
+        if (ioctl(ff_fd, EVIOCSFF, &effect) < 0) {
+            // Slot might be invalid or full, allocate anew
+            effect.id = -1;
+            if (ioctl(ff_fd, EVIOCSFF, &effect) < 0) {
+                return -1;
+            }
         }
+        g_ff_effect_id = effect.id;
+
+        struct input_event play;
+        memset(&play, 0, sizeof(play));
+        play.type = EV_FF;
+        play.code = effect.id;
+        play.value = 1;
+        write(ff_fd, &play, sizeof(play));
+        return 0;
     }
 
     return -1;
