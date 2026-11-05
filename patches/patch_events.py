@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys
-import re
 
 if len(sys.argv) < 2:
     print("Usage: patch_events.py <path_to_events.cpp>")
@@ -10,15 +9,12 @@ path = sys.argv[1]
 with open(path, "r", encoding="utf-8", errors="ignore") as f:
     content = f.read()
 
-# New vibrate implementation with Force Feedback (FF_RUMBLE) support for Unisoc sc27xx
-new_vibrate_func = '''
-static int g_ff_vibrator_fd = -1;
+new_vibrate_func = """static int g_ff_vibrator_fd = -1;
 
 static int get_ff_vibrator_fd() {
     if (g_ff_vibrator_fd >= 0) {
         return g_ff_vibrator_fd;
     }
-    // Check direct event node first
     int fd = open("/dev/input/event1", O_RDWR);
     if (fd >= 0) {
         char name[128] = {0};
@@ -28,13 +24,12 @@ static int get_ff_vibrator_fd() {
         }
         close(fd);
     }
-    // Otherwise scan /dev/input
     DIR *dir = opendir("/dev/input");
     if (dir) {
         struct dirent *de;
         while ((de = readdir(dir)) != NULL) {
             if (strncmp(de->d_name, "event", 5) == 0) {
-                char devpath[64];
+                char devpath[300];
                 snprintf(devpath, sizeof(devpath), "/dev/input/%s", de->d_name);
                 fd = open(devpath, O_RDWR);
                 if (fd >= 0) {
@@ -53,7 +48,8 @@ static int get_ff_vibrator_fd() {
     return -1;
 }
 
-int vibrate(int timeout_ms) {
+int vibrate(int timeout_ms)
+{
     char str[20];
     int len;
 
@@ -104,35 +100,37 @@ int vibrate(int timeout_ms) {
     }
 
     return -1;
-}
-'''
+}"""
 
-# Match int vibrate(int timeout_ms) { ... }
-pattern = r'int\s+vibrate\s*\([^)]*\)\s*\{[^}]*\}'
-if re.search(pattern, content):
-    content = re.sub(pattern, new_vibrate_func.strip(), content, count=1)
-    print("Successfully replaced vibrate() in events.cpp!")
-else:
-    # If regex failed to match simple braces, find start and replace to matching brace
-    idx = content.find("int vibrate(")
-    if idx != -1:
-        brace_open = content.find("{", idx)
-        if brace_open != -1:
-            depth = 1
-            cur = brace_open + 1
-            while cur < len(content) and depth > 0:
-                if content[cur] == '{':
-                    depth += 1
-                elif content[cur] == '}':
-                    depth -= 1
-                cur += 1
-            content = content[:idx] + new_vibrate_func.strip() + content[cur:]
-            print("Successfully replaced vibrate() using brace matching!")
-    else:
-        print("Error: Could not find int vibrate( in events.cpp")
-        sys.exit(1)
+start = content.find("int vibrate(")
+if start == -1:
+    print("Error: Could not find 'int vibrate(' in events.cpp")
+    sys.exit(1)
+
+brace_open = content.find("{", start)
+if brace_open == -1:
+    print("Error: Could not find opening '{' for vibrate() in events.cpp")
+    sys.exit(1)
+
+depth = 1
+i = brace_open + 1
+while i < len(content) and depth > 0:
+    ch = content[i]
+    if ch == '{':
+        depth += 1
+    elif ch == '}':
+        depth -= 1
+    i += 1
+
+if depth != 0:
+    print("Error: Unbalanced braces while scanning vibrate() in events.cpp")
+    sys.exit(1)
+
+end = i
+# String slicing replacement - completely avoids any regex / backslash expansion bugs
+content = content[:start] + new_vibrate_func + content[end:]
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(content)
 
-print(f"Patched {path} successfully!")
+print(f"Patched {path} successfully (replaced {end - start} characters)!")
