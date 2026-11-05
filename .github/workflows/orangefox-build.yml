@@ -72,7 +72,7 @@ jobs:
         cp -r $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}/* ~/fox_work/${{ env.DEVICE_PATH }}/
         rm -rf $GITHUB_WORKSPACE/${{ env.DEVICE_PATH }}
 
-    - name: Apply DRM Fix to minuitwrp
+    - name: Apply DRM and Vibrator Fix to minuitwrp
       run: |
         echo "Locating minuitwrp/graphics_drm.cpp..."
         TARGET_FILE=$(find ~/fox_work/bootable -path "*/minuitwrp/graphics_drm.cpp" | head -n 1)
@@ -81,6 +81,16 @@ jobs:
           cp ~/fox_work/${{ env.DEVICE_PATH }}/patches/graphics_drm.cpp "$TARGET_FILE"
         else
           echo "Error: minuitwrp/graphics_drm.cpp not found!"
+          exit 1
+        fi
+
+        echo "Locating minuitwrp/events.cpp..."
+        TARGET_EVENTS=$(find ~/fox_work/bootable -path "*/minuitwrp/events.cpp" | head -n 1)
+        if [ -n "$TARGET_EVENTS" ]; then
+          echo "Patching $TARGET_EVENTS for Force Feedback vibrator..."
+          python3 ~/fox_work/${{ env.DEVICE_PATH }}/patches/patch_events.py "$TARGET_EVENTS"
+        else
+          echo "Error: minuitwrp/events.cpp not found!"
           exit 1
         fi
 
