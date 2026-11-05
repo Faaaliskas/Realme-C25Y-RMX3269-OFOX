@@ -207,3 +207,21 @@ BOARD_ROOT_EXTRA_FOLDERS += external_sd
 TWRP_EVENT_LOGGING := true
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
+
+# Crypto (FBE) - Stock Keymaster 4.1 + Gatekeeper 1.0 (Unisoc Trusty TEE)
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_CRYPTO_FBE := true
+TW_USE_FSCRYPT_POLICY := 2
+TW_FORCE_KEYMASTER_VER := true
+OF_DEFAULT_KEYMASTER_VERSION := 4.1
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.gatekeeper@1.0 \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.keymaster@4.0 \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.keymaster@4.1 \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libgatekeeper \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster_messages \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster_portable \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4 \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4support \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libtrusty
