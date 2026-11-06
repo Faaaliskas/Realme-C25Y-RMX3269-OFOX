@@ -80,30 +80,40 @@ int vibrate(int timeout_ms)
     // 3. Try Linux Input Force Feedback (/dev/input/event1 for sc27xx-vibrator)
     int ff_fd = get_ff_vibrator_fd();
     if (ff_fd >= 0) {
-        struct ff_effect effect;
-        memset(&effect, 0, sizeof(effect));
-        effect.type = FF_RUMBLE;
-        effect.id = g_ff_effect_id;
-        effect.u.rumble.strong_magnitude = 0xFFFF;
-        effect.u.rumble.weak_magnitude = 0xFFFF;
-        effect.replay.length = (timeout_ms > 0 ? timeout_ms : 50);
-        effect.replay.delay = 0;
-
-        if (ioctl(ff_fd, EVIOCSFF, &effect) < 0) {
-            // Slot might be invalid or full, allocate anew
+        if (g_ff_effect_id < 0) {
+            struct ff_effect effect;
+            memset(&effect, 0, sizeof(effect));
+            effect.type = FF_RUMBLE;
             effect.id = -1;
+            effect.u.rumble.strong_magnitude = 0xFFFF;
+            effect.u.rumble.weak_magnitude = 0xFFFF;
+            effect.replay.length = (timeout_ms > 0 ? timeout_ms : 50);
+            effect.replay.delay = 0;
+
             if (ioctl(ff_fd, EVIOCSFF, &effect) < 0) {
-                return -1;
+                // If table is full from previous runs, clean slots 0..15 and retry
+                for (int id = 0; id < 16; id++) {
+                    ioctl(ff_fd, EVIOCRMFF, id);
+                }
+                if (ioctl(ff_fd, EVIOCSFF, &effect) < 0) {
+                    return -1;
+                }
             }
+            g_ff_effect_id = effect.id;
         }
-        g_ff_effect_id = effect.id;
 
         struct input_event play;
         memset(&play, 0, sizeof(play));
         play.type = EV_FF;
-        play.code = effect.id;
+        play.code = g_ff_effect_id;
         play.value = 1;
-        write(ff_fd, &play, sizeof(play));
+        if (write(ff_fd, &play, sizeof(play)) < 0) {
+            ioctl(ff_fd, EVIOCRMFF, g_ff_effect_id);
+            g_ff_effect_id = -1;
+            close(ff_fd);
+            g_ff_vibrator_fd = -1;
+            return -1;
+        }
         return 0;
     }
 

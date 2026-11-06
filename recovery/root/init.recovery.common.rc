@@ -74,6 +74,21 @@ service gpsd /vendor/bin/gpsd
     group gps system shell inet net_raw wifi
 
 on init
+    # Mount binderfs and create compatibility symlinks
+    mkdir /dev/binderfs 0755 root root
+    mount binder binder /dev/binderfs stats=global
+    chmod 0755 /dev/binderfs
+    chmod 0666 /dev/binderfs/hwbinder
+    chmod 0666 /dev/binderfs/binder
+    chmod 0666 /dev/binderfs/vndbinder
+    symlink /dev/binderfs/binder /dev/binder
+    symlink /dev/binderfs/hwbinder /dev/hwbinder
+    symlink /dev/binderfs/vndbinder /dev/vndbinder
+
+    start hwservicemanager
+    start servicemanager
+    start vndservicemanager
+
     # Apply strict SELinux checking of PROT_EXEC on mmap/mprotect calls.
     write /sys/fs/selinux/checkreqprot 0
     start healthd
@@ -490,6 +505,7 @@ service keymaster-4-1 /system/bin/android.hardware.keymaster@4.1-unisoc.service
     interface android.hardware.keymaster@4.1::IKeymasterDevice default
     user system
     group system drmrpc
+    oneshot
     disabled
     seclabel u:r:recovery:s0
     setenv LD_LIBRARY_PATH /system/lib64:/vendor/lib64
@@ -498,6 +514,7 @@ service gatekeeper-1-0 /system/bin/android.hardware.gatekeeper@1.0-service.trust
     interface hidl android.hardware.gatekeeper@1.0::IGatekeeper default
     user system
     group system
+    oneshot
     disabled
     seclabel u:r:recovery:s0
     setenv LD_LIBRARY_PATH /system/lib64:/vendor/lib64
@@ -505,6 +522,7 @@ service gatekeeper-1-0 /system/bin/android.hardware.gatekeeper@1.0-service.trust
 service vendor.tsupplicant /system/bin/tsupplicant firmware
     user system
     group system
+    oneshot
     disabled
     seclabel u:r:recovery:s0
     setenv LD_LIBRARY_PATH /system/lib64:/vendor/lib64
@@ -524,7 +542,7 @@ service storage-proxies /system/bin/start_storage_proxies.sh
     seclabel u:r:recovery:s0
 
 # TEE secure storage proxies
-service vendor.rpmbproxy /system/bin/sprdstorageproxyd -f rpmb -d /dev/trusty-ipc-dev0 -p /data/vendor/sprd_ss -r /dev/mmcblk0rpmb
+service vendor.rpmbproxy /system/bin/sprdstorageproxyd -f rpmb -d /dev/trusty-ipc-dev0 -p /tmp/sprd_ss -r /dev/mmcblk0rpmb
     user root
     group system
     oneshot
@@ -532,9 +550,10 @@ service vendor.rpmbproxy /system/bin/sprdstorageproxyd -f rpmb -d /dev/trusty-ip
     seclabel u:r:recovery:s0
     setenv LD_LIBRARY_PATH /system/lib64:/vendor/lib64
 
-service vendor.nsproxy /system/bin/sprdstorageproxyd -f ns -d /dev/trusty-ipc-dev0 -p /data/vendor/sprd_ss -r /dev/mmcblk0rpmb
+service vendor.nsproxy /system/bin/sprdstorageproxyd -f ns -d /dev/trusty-ipc-dev0 -p /tmp/sprd_ss -r /dev/mmcblk0rpmb
     user root
     group system
+    oneshot
     disabled
     seclabel u:r:recovery:s0
     setenv LD_LIBRARY_PATH /system/lib64:/vendor/lib64
@@ -553,3 +572,6 @@ on property:twrp.tsupplicant.ready=1
 on property:ro.crypto.state=unsupported || property:ro.crypto.state=unencrypted || property:twrp.decrypt.done=true
     stop keymaster-4-1
     stop gatekeeper-1-0
+    stop vendor.tsupplicant
+    stop vendor.rpmbproxy
+    stop vendor.nsproxy
