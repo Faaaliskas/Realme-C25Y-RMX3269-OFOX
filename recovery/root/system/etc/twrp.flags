@@ -6,6 +6,11 @@
 /boot                    emmc     /dev/block/by-name/boot                      flags=display=boot;slotselect;backup=1;flashimg=1
 /dtbo                    emmc     /dev/block/by-name/dtbo                      flags=display=dtbo;slotselect;backup=1;flashimg=1
 /uboot                   emmc     /dev/block/by-name/uboot                     flags=display="u-boot";slotselect;backup=1
+/spl                     emmc     /dev/block/mmcblk0boot0                      flags=display="SPL";slotselect;backup=1
+/spl_bk                  emmc     /dev/block/mmcblk0boot1                      flags=display="SPL_BK";backup=1
+/sml                     emmc     /dev/block/by-name/sml                       flags=display="SML";slotselect;backup=1
+/tos                     emmc     /dev/block/by-name/trustos                   flags=display="TrustOS";slotselect;backup=1
+/teecfg                  emmc     /dev/block/by-name/teecfg                    flags=display="TEE Config";slotselect;backup=1
 /misc                    emmc     /dev/block/by-name/misc                      flags=display=misc;backup=1
 /metadata                ext4     /dev/block/by-name/metadata                  flags=display=metadata;backup=1
 /socko                   ext4     /dev/block/by-name/socko                     flags=display=socko;slotselect;backup=1
