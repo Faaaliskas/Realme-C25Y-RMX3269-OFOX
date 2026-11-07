@@ -3,11 +3,6 @@
 /vendor_image            emmc     /dev/block/mapper/vendor                     flags=display="Vendor image";slotselect;backup=1;flashimg=1
 /product_image           emmc     /dev/block/mapper/product                    flags=display="Product image";slotselect;backup=1;flashimg=1
 /system_ext_image        emmc     /dev/block/mapper/system_ext                 flags=display="System_ext image";slotselect;backup=1;flashimg=1
-# Dynamic Partitions
-/system_root             ext4     /dev/block/mapper/system                     flags=display="System";slotselect;backup=1;flashimg=1
-/system_ext              ext4     /dev/block/mapper/system_ext                 flags=display="System_ext";slotselect;backup=1;flashimg=1
-/product                 ext4     /dev/block/mapper/product                    flags=display="Product";slotselect;backup=1;flashimg=1
-/vendor                  ext4     /dev/block/mapper/vendor                     flags=display="Vendor";slotselect;backup=1;flashimg=1
 /boot                    emmc     /dev/block/by-name/boot                      flags=display=boot;slotselect;backup=1;flashimg=1
 /dtbo                    emmc     /dev/block/by-name/dtbo                      flags=display=dtbo;slotselect;backup=1;flashimg=1
 /uboot                   emmc     /dev/block/by-name/uboot                     flags=display="u-boot";slotselect;backup=1

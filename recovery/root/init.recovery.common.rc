@@ -83,13 +83,8 @@ on init
     symlink /dev/binderfs/hwbinder /dev/hwbinder
     symlink /dev/binderfs/vndbinder /dev/vndbinder
 
-    start hwservicemanager
-    start servicemanager
-    start vndservicemanager
-
     # Apply strict SELinux checking of PROT_EXEC on mmap/mprotect calls.
     write /sys/fs/selinux/checkreqprot 0
-    start health-hal-2-1
     chown system system /sys/bus/iio/devices/trigger0/name
     chown system system /sys/bus/iio/devices/iio:device1/buffer
     chown system system /sys/bus/iio/devices/iio:device1/buffer/length
@@ -224,6 +219,10 @@ on fs
     mkdir /data/misc/bluetooth 0770 system system
 
 on property:ro.bootmode=recovery
+    start hwservicemanager
+    start servicemanager
+    start vndservicemanager
+    start health-hal-2-1
     start prepdecrypt
 
 on post-fs-data
