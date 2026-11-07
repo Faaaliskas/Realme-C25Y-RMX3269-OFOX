@@ -83,6 +83,10 @@ on init
     symlink /dev/binderfs/hwbinder /dev/hwbinder
     symlink /dev/binderfs/vndbinder /dev/vndbinder
 
+    start hwservicemanager
+    start servicemanager
+    start vndservicemanager
+
     # Apply strict SELinux checking of PROT_EXEC on mmap/mprotect calls.
     write /sys/fs/selinux/checkreqprot 0
     chown system system /sys/bus/iio/devices/trigger0/name
@@ -214,17 +218,14 @@ on boot
     chmod 660 /sys/class/power_supply/battery/input_current_limit
     chmod 660 /sys/class/power_supply/battery/constant_charge_current
 
-on fs
-    #mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
-    mkdir /data/misc/bluetooth 0770 system system
-
-on property:ro.bootmode=recovery
-    start hwservicemanager
-    start servicemanager
-    start vndservicemanager
     start health-hal-2-1
     start boot-hal-1-1
     start prepdecrypt
+    class_start recovery
+
+on fs
+    #mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
+    mkdir /data/misc/bluetooth 0770 system system
 
 on post-fs-data
     # We chown/chmod /data again so because mount is run as root + defaults

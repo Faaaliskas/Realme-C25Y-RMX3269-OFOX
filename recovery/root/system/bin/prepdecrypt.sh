@@ -4,15 +4,8 @@
 LOG=/tmp/prepdecrypt.log
 exec > "$LOG" 2>&1
 
-bootmode=$(getprop ro.bootmode)
-[ -z "$bootmode" ] && bootmode=$(getprop ro.boot.mode)
-if [ -n "$bootmode" ] && [ "$bootmode" != "recovery" ]; then
-    echo "Not in recovery mode ($bootmode), skipping prepdecrypt"
-    exit 0
-fi
-
 i=0
-while [ $i -lt 30 ]; do
+while [ $i -lt 15 ]; do
     [ -e /dev/trusty-ipc-dev0 ] && break
     sleep 1
     i=$((i + 1))
