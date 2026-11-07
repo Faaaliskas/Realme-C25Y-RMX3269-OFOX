@@ -3,9 +3,7 @@
 #
 import /init.recovery.usb.rc
 
-service healthd /system/bin/healthd -r
-    critical
-    seclabel u:r:healthd:s0
+# health-hal-2-1 is defined in android.hardware.health@2.1-service.rc
 
 service modem_ctl-cali /vendor/bin/modem_control
     class cali
@@ -91,7 +89,7 @@ on init
 
     # Apply strict SELinux checking of PROT_EXEC on mmap/mprotect calls.
     write /sys/fs/selinux/checkreqprot 0
-    start healthd
+    start health-hal-2-1
     chown system system /sys/bus/iio/devices/trigger0/name
     chown system system /sys/bus/iio/devices/iio:device1/buffer
     chown system system /sys/bus/iio/devices/iio:device1/buffer/length
